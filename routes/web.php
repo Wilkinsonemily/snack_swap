@@ -33,4 +33,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('rules', RuleController::class);
 
 });
+Route::get('/__sync-healthy', function () {
+    Artisan::call('healthy:sync snack');
+    return 'Healthy snack synced';
+});
 
