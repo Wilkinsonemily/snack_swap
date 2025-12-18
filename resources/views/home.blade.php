@@ -83,9 +83,9 @@
                     </div>
                     <div class="soft-divider my-3"></div>
                     <div class="d-flex align-items-center gap-3">
-                    <img src="https://picsum.photos/seed/chips/96/72" class="rounded-3" alt="">
+                    <img src="https://img.id.my-best.com/product_images/446e85bd240f1357e8323d6a8eade7a2.png?ixlib=rails-4.3.1&q=45&lossless=0&w=160&h=160&fit=clip&s=531fb409fbd792f97364c636cd57a15c" class="rounded-3" alt="" width="100">
                     <i class="bi bi-arrow-right fs-4 text-secondary"></i>
-                    <img src="https://picsum.photos/seed/almond/96/72" class="rounded-3" alt="">
+                    <img src="https://img.id.my-best.com/product_images/b3469a404fa4832e5f7b432670386d3e.png?ixlib=rails-4.3.1&q=45&lossless=0&w=160&h=160&fit=clip&s=7ec8145e769b67465de9ea842c6dc60d" class="rounded-3" alt="" width="100">
                     </div>
                     <p class="text-muted small mt-3 mb-0">Kalori & sodium umumnya lebih rendah dibanding keripik kentang.</p>
                 </div>
@@ -101,9 +101,9 @@
                     </div>
                     <div class="soft-divider my-3"></div>
                     <div class="d-flex align-items-center gap-3">
-                    <img src="https://picsum.photos/seed/soda/96/72" class="rounded-3" alt="">
+                    <img src="https://img.id.my-best.com/product_images/5b90326e3c704c2cca195199a5a55478.png?ixlib=rails-4.3.1&q=45&lossless=0&w=160&h=160&fit=clip&s=1316755507540abd472bd927d91c12c0" class="rounded-3" alt="" width="100">
                     <i class="bi bi-arrow-right fs-4 text-secondary"></i>
-                    <img src="https://picsum.photos/seed/sparkling/96/72" class="rounded-3" alt="">
+                    <img src="https://img.id.my-best.com/product_images/4b2b11c2de8698845fbed8d851ed76af.jpeg?ixlib=rails-4.3.1&q=70&lossless=0&w=240&h=240&fit=fill&fill=solid&fill-color=FFFFFF&s=a94b6a9f0fdeb9b651fc2fae07d76351" class="rounded-3" alt="" width="100">
                     </div>
                     <p class="text-muted small mt-3 mb-0">Kurangi gula tambahan tanpa kehilangan sensasi “fizz”.</p>
                 </div>
@@ -119,9 +119,9 @@
                     </div>
                     <div class="soft-divider my-3"></div>
                     <div class="d-flex align-items-center gap-3">
-                    <img src="https://picsum.photos/seed/cookies/96/72" class="rounded-3" alt="">
+                    <img src="https://img.id.my-best.com/product_images/1e8896c7bbc30ec1b7db2b86be03b8c7.jpeg?ixlib=rails-4.3.1&q=70&lossless=0&w=240&h=240&fit=fill&fill=solid&fill-color=FFFFFF&s=3f0417002ef39164b375d68babb344e4" class="rounded-3" alt="" width="100">
                     <i class="bi bi-arrow-right fs-4 text-secondary"></i>
-                    <img src="https://picsum.photos/seed/oats/96/72" class="rounded-3" alt="">
+                    <img src="https://img.id.my-best.com/product_images/d90432b91510d7698400212b6cd7190a.png?ixlib=rails-4.3.1&q=70&lossless=0&w=240&h=240&fit=fill&fill=solid&fill-color=FFFFFF&s=8fda8e7fd803bbbaafc376ce6e802d10" class="rounded-3" alt="" width="100">
                     </div>
                     <p class="text-muted small mt-3 mb-0">Serat lebih tinggi → kenyang lebih lama.</p>
                 </div>
