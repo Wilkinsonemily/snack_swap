@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,12 +16,24 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if (Schema::hasTable('foods')) {
+        // Pastikan table users ada
+        if (Schema::hasTable('users')) {
 
-            $count = \DB::table('foods')->count();
+            // Cek apakah admin sudah ada
+            $adminExists = DB::table('users')
+                ->where('email', 'admin@example.com')
+                ->exists();
 
-            if ($count === 0) {
-                Artisan::call('healthy:sync', ['type' => 'snack']);
+            if (! $adminExists) {
+                DB::table('users')->insert([
+                    'name'              => 'Admin',
+                    'email'             => 'admin@example.com',
+                    'password'          => Hash::make('admin123'),
+                    'is_admin'          => 1,
+                    'email_verified_at' => now(),
+                    'created_at'        => now(),
+                    'updated_at'        => now(),
+                ]);
             }
         }
     }
