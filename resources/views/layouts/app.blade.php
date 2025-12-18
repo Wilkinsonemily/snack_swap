@@ -10,7 +10,7 @@
   {{-- Icons (CDN ok) --}}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   {{-- Custom CSS --}}
-  <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+  <!-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> -->
 </head>
 
 <body class="d-flex flex-column min-vh-100 bg-body">
@@ -89,6 +89,8 @@
     </div>
   </footer>
 
-  <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  
 </body>
 </html>
