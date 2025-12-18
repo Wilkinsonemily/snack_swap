@@ -1,0 +1,271 @@
+/* =========================================
+   1. GLOBAL LAYOUT & RESET
+   ========================================= */
+body { 
+    background-color: #f4f6f9; 
+    font-family: 'Segoe UI', sans-serif; 
+    margin: 0; 
+}
+
+.admin-wrapper { 
+    width: 100%; 
+    min-height: 100vh; 
+}
+
+/* =========================================
+   2. SIDEBAR NAVIGATION
+   ========================================= */
+/* Main Container - Fixed Position with Gradient */
+.sidebar {
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    min-height: 100vh; 
+    width: 250px; 
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    position: fixed; 
+    left: 0; 
+    top: 0; 
+    z-index: 1000; /* Ensures sidebar stays above content */
+    transition: transform 0.3s ease; /* Smooth slide effect for mobile */
+}
+
+/* Sidebar Branding/Header Area */
+.sidebar-header { 
+    padding: 2rem 1.5rem; 
+    background: rgba(0,0,0,0.2); 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+}
+
+.sidebar-header .fs-4 { 
+    font-weight: 600; 
+    letter-spacing: 1px; 
+}
+
+.sidebar hr { 
+    border-color: rgba(255,255,255,0.1); 
+    margin: 0; 
+}
+
+.sidebar .nav { 
+    padding: 1rem 0; 
+}
+
+/* Navigation Links - Interactive States */
+.sidebar .nav-link, .sidebar-footer a {
+    color: rgba(255,255,255,0.7); 
+    padding: 1rem 1.5rem; 
+    border-left: 3px solid transparent; /* Hidden border for hover effect */
+    transition: all 0.3s ease; 
+    display: flex; 
+    align-items: center; 
+    text-decoration: none;
+}
+
+.sidebar .nav-link i, .sidebar-footer i { 
+    margin-right: 0.75rem; 
+    width: 20px; 
+    font-size: 1.1rem; 
+}
+
+/* Hover & Active States */
+.sidebar .nav-link:hover, .sidebar-footer a:hover { 
+    background: rgba(255,255,255,0.05); 
+    color: #fff; 
+    border-left-color: #3498db; /* Blue accent on hover */
+}
+
+.sidebar .nav-link.active { 
+    background: rgba(52, 152, 219, 0.2); 
+    color: #fff; 
+    border-left-color: #3498db; 
+}
+
+/* Sidebar Footer (Settings/Logout area) */
+.sidebar-footer { 
+    position: absolute; 
+    bottom: 0; 
+    width: 100%; 
+    padding: 1.5rem; 
+    background: rgba(0,0,0,0.2); 
+    border-top: 1px solid rgba(255,255,255,0.1); 
+}
+
+/* =========================================
+   3. MAIN CONTENT AREA
+   ========================================= */
+.main-content { 
+    margin-left: 250px; /* Pushes content to right of sidebar */
+    padding: 2rem; 
+    min-height: 100vh; 
+    background-color: #f4f6f9; 
+}
+
+/* =========================================
+   4. RESPONSIVE DESIGN (MOBILE)
+   ========================================= */
+/* Hamburger Menu Button (Hidden on Desktop) */
+.mobile-toggle {
+    display: none; 
+    position: fixed; 
+    top: 1rem; 
+    left: 1rem; 
+    z-index: 1001;
+    background: #2c3e50; 
+    color: white; 
+    border: none; 
+    padding: 0.75rem 1rem;
+    border-radius: 8px; 
+    cursor: pointer; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Mobile Breakpoint (<768px) */
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); } /* Hide sidebar off-screen */
+    .sidebar.show { transform: translateX(0); } /* Slide in when active */
+    .main-content { margin-left: 0; } /* Full width content */
+    .mobile-toggle { display: block; } /* Show button */
+}
+
+/* =========================================
+   5. DASHBOARD COMPONENTS
+   ========================================= */
+/* Bootstrap Alert Overrides */
+.alert { 
+    border-radius: 8px; 
+    border: none; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+}
+
+/* Statistics Cards (Widgets) */
+.stat-card {
+    border: none; 
+    border-radius: 12px; 
+    overflow: hidden; 
+    position: relative;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08); 
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover { 
+    transform: translateY(-5px); /* Lift effect on hover */
+}
+
+/* Colored Top Border Strip */
+.stat-card::before { 
+    content: ''; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    height: 4px; 
+}
+
+/* Icon Box Styling */
+.stat-icon {
+    width: 50px; 
+    height: 50px; 
+    border-radius: 10px; 
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    font-size: 1.4rem; 
+    color: #fff;
+}
+
+/* --- Stat Card Color Themes --- */
+/* Blue Theme */
+.stat-card.blue::before { background: linear-gradient(90deg, #3498db, #2980b9); }
+.stat-card.blue .stat-icon { background: linear-gradient(135deg, #3498db, #2980b9); }
+
+/* Green Theme */
+.stat-card.green::before { background: linear-gradient(90deg, #27ae60, #229954); }
+.stat-card.green .stat-icon { background: linear-gradient(135deg, #27ae60, #229954); }
+
+/* Yellow Theme */
+.stat-card.yellow::before { background: linear-gradient(90deg, #f39c12, #e67e22); }
+.stat-card.yellow .stat-icon { background: linear-gradient(135deg, #f39c12, #e67e22); }
+
+/* =========================================
+   6. PAGE SPECIFIC OVERRIDES
+   ========================================= */
+/* Card Headers */
+.card-header { padding: 1rem 1.25rem; }
+.bg-success { background: linear-gradient(135deg, #27ae60, #229954) !important; }
+.bg-dark { background: linear-gradient(135deg, #2c3e50, #34495e) !important; }
+
+/* Form Inputs & Buttons */
+.form-control:focus { 
+    border-color: #27ae60; 
+    box-shadow: 0 0 0 0.2rem rgba(39, 174, 96, 0.15); 
+}
+
+.btn-success { 
+    background: linear-gradient(135deg, #27ae60, #229954); 
+    border: none; 
+}
+
+.btn-success:hover { 
+    background: linear-gradient(135deg, #229954, #1e8449); 
+    transform: translateY(-1px); 
+}
+
+/* Data Tables */
+.font-monospace { letter-spacing: -0.5px; }
+.table thead th { 
+    border-bottom: none; 
+    text-transform: uppercase; 
+    font-size: 0.85rem; 
+    letter-spacing: 0.5px; 
+}
+.btn-sm { padding: 0.25rem 0.5rem; }
+
+/* =========================================
+   7. AUTHENTICATION PAGES (LOGIN)
+   ========================================= */
+/* Full Screen Login Layout */
+.login-page {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Login Card Container & Entry Animation */
+.login-card {
+    background: white;
+    border-radius: 16px;
+    animation: slideUp 0.5s ease; /* Trigger keyframe animation */
+    overflow: hidden; 
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Login Header Styling */
+.login-header {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+/* Custom Login Button */
+.btn-login {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background: linear-gradient(135deg, #34495e, #2c3e50);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Utility Links */
+.back-link a:hover {
+    transform: translateX(-5px);
+}
