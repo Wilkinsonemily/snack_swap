@@ -11,38 +11,62 @@ class SearchController extends Controller
 {
     public function __construct(private FoodCatalogService $catalog) {}
 
-    public function home() { return view('home'); }
+    public function home()
+    {
+        return view('home');
+    }
 
     public function index(Request $request)
     {
         $q      = trim($request->query('query',''));
-        $page   = (int) $request->query('page', 1);
+        $page   = max(1, (int) $request->query('page', 1));
         $region = $request->query('region', 'global');
 
         if ($q === '') {
             return view('search.index', [
-                'query'=>'','products'=>[], 'next'=>null, 'error'=>null, 'region'=>$region
+                'query'   => '',
+                'products'=> [],
+                'next'    => null,
+                'error'   => null,
+                'region'  => $region,
             ]);
         }
 
         $cacheKey = "search:{$region}:{$page}:" . md5($q);
-        $res = Cache::remember($cacheKey, now()->addMinutes(15), function () use ($q,$page,$region) {
-            return $this->catalog->search($q, $page, (int) env('OFF_PAGE_SIZE', 12), ['region'=>$region]);
-        });
 
+        // ✅ Ambil dari cache, tapi kalau error jangan dicache lama.
+        $res = Cache::get($cacheKey);
+
+        if (!$res) {
+            $res = $this->catalog->search(
+                $q,
+                $page,
+                (int) env('OFF_PAGE_SIZE', 12),
+                ['region' => $region]
+            );
+
+            // kalau error/timeout -> cache sebentar aja (1 menit)
+            $ttl = !empty($res['error']) ? now()->addMinutes(1) : now()->addMinutes(15);
+            Cache::put($cacheKey, $res, $ttl);
+        }
+
+        // log pencarian (kalau table belum ada, dia silent fail)
         try {
             DB::table('search_logs')->insert([
                 'query'      => $q,
                 'region'     => $region,
-                'results'    => count($res['items']),
+                'results'    => is_array($res['items'] ?? null) ? count($res['items']) : 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-        } catch (\Throwable $e) { }
+        } catch (\Throwable $e) {}
 
         return view('search.index', [
-            'query'=>$q,'products'=>$res['items'],'next'=>$res['next'],
-            'error'=>$res['error'],'region'=>$region,
+            'query'    => $q,
+            'products' => $res['items'] ?? [],
+            'next'     => $res['next'] ?? null,
+            'error'    => $res['error'] ?? null,
+            'region'   => $region,
         ]);
     }
 

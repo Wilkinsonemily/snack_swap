@@ -8,41 +8,73 @@ use App\Services\Providers\LocalDatabaseProvider;
 class FoodCatalogService
 {
     /** @return array{items:array,next:?string,error:?string} */
-    public function search(string $query, int $page = 1, int $size = 24, array $opts = []): array
+   public function search(string $q, int $page, int $pageSize, array $opts = []): array
     {
         $region = $opts['region'] ?? 'global';
 
-        $providers = $region === 'id'
-            ? [new LocalDatabaseProvider(), new OpenFoodFactsProvider()]
-            : [new OpenFoodFactsProvider(), new LocalDatabaseProvider()];
+        try {
+            $url = "https://world.openfoodfacts.org/cgi/search.pl";
 
-        $all = []; $next = null; $error = null;
+            $response = Http::timeout(12)
+                ->retry(2, 300)
+                ->withHeaders([
+                    'User-Agent' => 'SnackSwap/1.0 (Laravel; Railway)',
+                    'Accept' => 'application/json',
+                ])
+                ->get($url, [
+                    'search_terms' => $q,
+                    'search_simple' => 1,
+                    'action' => 'process',
+                    'json' => 1,
+                    'page' => $page,
+                    'page_size' => $pageSize,
+                ]);
 
-        foreach ($providers as $i => $p) {
-            $limit = $size;                    // boleh dibagi, mis. $size/2
-            $res = $p->search($query, $page, $size, ['region'=>$region, 'limit'=>$limit]);
-            $all   = array_merge($all, $res['items']);
-            $next  = $next  ?? $res['next'];
-            $error = $error ?? $res['error'];
+            if (!$response->successful()) {
+                Log::error("OFF search failed", [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+
+                return [
+                    'items' => [],
+                    'next'  => null,
+                    'error' => 'Some external results couldn’t be loaded (API error). Try again.',
+                ];
+            }
+
+            $data = $response->json();
+
+            $items = collect($data['products'] ?? [])
+                ->filter(fn($p) => !empty($p['product_name']))
+                ->map(fn($p) => [
+                    'id' => $p['code'] ?? null,
+                    'name' => $p['product_name'] ?? 'Unknown',
+                    'image' => $p['image_url'] ?? null,
+                    'calories' => $p['nutriments']['energy-kcal_100g'] ?? null,
+                    'sugar' => $p['nutriments']['sugars_100g'] ?? null,
+                    'fat' => $p['nutriments']['fat_100g'] ?? null,
+                ])
+                ->values()
+                ->all();
+
+            $hasMore = !empty($data['page_count']) && $page < (int)$data['page_count'];
+
+            return [
+                'items' => $items,
+                'next'  => $hasMore ? $page + 1 : null,
+                'error' => null,
+            ];
+
+        } catch (\Throwable $e) {
+            Log::error("OFF search timeout/fail", ['msg' => $e->getMessage()]);
+
+            return [
+                'items' => [],
+                'next'  => null,
+                'error' => 'Some external results couldn’t be loaded (timeout). Showing what we have.',
+            ];
         }
-
-        $seen = [];
-        $dedup = [];
-        foreach ($all as $it) {
-            $key = $it['id']
-                ?: strtolower(trim(($it['name'] ?? '').'|'.($it['brand'] ?? '')));
-            if (!$key || isset($seen[$key])) continue;
-            $seen[$key] = true;
-            $dedup[] = $it;
-        }
-
-        if ($region === 'global') {
-            usort($dedup, fn($a,$b) => ($a['source']==='OFF'?0:1) <=> ($b['source']==='OFF'?0:1));
-        } else {
-            usort($dedup, fn($a,$b) => ($a['source']==='LOCAL'?0:1) <=> ($b['source']==='LOCAL'?0:1));
-        }
-
-        return ['items'=>array_slice($dedup, 0, $size), 'next'=>$next, 'error'=>$error];
     }
 
     public function detail(string $id): ?array

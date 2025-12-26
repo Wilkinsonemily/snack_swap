@@ -20,4 +20,26 @@ class CategoryController extends Controller {
         $category->delete();
         return back()->with('success', 'Category deleted!');
     }
+
+        public function edit($id)
+    {
+        $category = \App\Models\Category::findOrFail($id);
+        return view('admin.categories.edit', compact('category'));
+    }
+
+    public function update(\Illuminate\Http\Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $category = \App\Models\Category::findOrFail($id);
+        $category->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('admin.categories.index')->with('success', 'Category updated!');
+    }
+
+
 }

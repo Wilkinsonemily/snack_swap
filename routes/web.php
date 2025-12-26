@@ -31,6 +31,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('categories', CategoryController::class);
     Route::resource('foods', FoodController::class);
     Route::resource('rules', RuleController::class);
+    
 
 });
 
