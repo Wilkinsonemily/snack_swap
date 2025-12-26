@@ -72,43 +72,52 @@ class SwapController extends Controller
                 'comparison'         => $this->makeComparison($unhealthyFood, $primarySwap),
             ]);
         }
-
         $healthySuggestions = Food::where('category_id', $matchedCategory->id)
             ->where('is_healthy', 1)
+            ->orderBy('calories', 'asc')
+            ->orderBy('sugar', 'asc')
+            ->orderBy('fat', 'asc')
             ->get();
-
-        if ($healthySuggestions->isEmpty()) {
-            $healthySuggestions = Food::where('is_healthy', 1)->inRandomOrder()->take(12)->get();
-        }
 
         $primarySwap = $healthySuggestions->first();
 
-        return view('swap.result', [
-            'unhealthyFood'      => $unhealthyFood,
-            'matchedCategory'    => $matchedCategory,
-            'primarySwap'        => $primarySwap,
-            'healthySuggestions' => $healthySuggestions,
-            'comparison'         => $this->makeComparison($unhealthyFood, $primarySwap),
-        ]);
-    }
+        if (
+            !$primarySwap ||
+            $primarySwap->calories >= $unhealthyFood['calories']
+        ) {
+            return view('swap.result', [
+                'unhealthyFood' => $unhealthyFood,
+                'matchedCategory' => $matchedCategory,
+                'primarySwap' => null,
+                'healthySuggestions' => [],
+                'comparison' => [],
+                'message' => 'No healthier swap found for this product.'
+            ]);
+        }
 
-    private function normTag(string $tag): string
-    {
-        $tag = strtolower($tag);
-        $tag = str_replace('en:', '', $tag);
-        $tag = str_replace(['-', '_'], ' ', $tag);
-        return trim($tag);
-    }
 
-    private function makeComparison(array $unhealthyFood, $primarySwap): array
-    {
-        if (!$primarySwap) return [];
+        $score = 100;
 
-        return [
-            'calories_saved' => max(0, ($unhealthyFood['calories'] ?? 0) - ($primarySwap->calories ?? 0)),
-            'sugar_saved'    => max(0, ($unhealthyFood['sugar'] ?? 0) - ($primarySwap->sugar ?? 0)),
-            'fat_saved'      => max(0, ($unhealthyFood['fat'] ?? 0) - ($primarySwap->fat ?? 0)),
-            'score'          => 85,
+        $score -= max(0, $primarySwap->calories - $unhealthyFood['calories']) * 0.2;
+        $score -= max(0, $primarySwap->sugar    - $unhealthyFood['sugar'])    * 0.5;
+        $score -= max(0, $primarySwap->fat      - $unhealthyFood['fat'])      * 0.3;
+
+        $score = max(40, min(95, round($score)));
+
+
+        $comparison = [
+            'calories_saved' => max(0, $unhealthyFood['calories'] - $primarySwap->calories),
+            'sugar_saved'    => max(0, $unhealthyFood['sugar']    - $primarySwap->sugar),
+            'fat_saved'      => max(0, $unhealthyFood['fat']      - $primarySwap->fat),
+            'score'          => $score
         ];
-    }
+
+        return view('swap.result', compact(
+            'unhealthyFood',
+            'matchedCategory',
+            'primarySwap',
+            'comparison',
+            'healthySuggestions'
+        ));
+
 }
