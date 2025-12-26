@@ -10,74 +10,66 @@ class SwapController extends Controller
 {
     public function show($barcode)
     {
-        $response = Http::get("https://world.openfoodfacts.org/api/v0/product/{$barcode}.json");
+        $response = Http::timeout(10)->get("https://world.openfoodfacts.org/api/v0/product/{$barcode}.json");
         $data = $response->json();
 
-        if (!isset($data['status']) || $data['status'] != 1) {
+        if (!isset($data['status']) || (int)$data['status'] !== 1) {
             return view('errors.not_found');
         }
 
-        $product = $data['product'];
+        $product = $data['product'] ?? [];
 
         $unhealthyFood = [
-            'name' => $product['product_name'] ?? 'Unknown',
-            'image' => $product['image_url'] ?? 'https://placehold.co/400',
+            'name'     => $product['product_name'] ?? ($product['generic_name'] ?? 'Unknown'),
+            'image'    => $product['image_url'] ?? 'https://placehold.co/400',
             'calories' => $product['nutriments']['energy-kcal_100g'] ?? 0,
-            'sugar' => $product['nutriments']['sugars_100g'] ?? 0,
-            'fat' => $product['nutriments']['fat_100g'] ?? 0,
+            'sugar'    => $product['nutriments']['sugars_100g'] ?? 0,
+            'fat'      => $product['nutriments']['fat_100g'] ?? 0,
         ];
 
-        $rawTags = [];
+        $texts = [];
 
-        $rawTags = array_merge($rawTags, $product['categories_tags'] ?? []);
-        $rawTags = array_merge($rawTags, $product['labels_tags'] ?? []);
-        $rawTags = array_merge($rawTags, $product['brands_tags'] ?? []);
+        $categoryTags = $product['categories_tags'] ?? [];
+        foreach ($categoryTags as $t) {
+            $texts[] = $this->normTag($t);
+        }
 
-        $textBlob = strtolower(
-            ($product['product_name'] ?? '') . ' ' .
-            ($product['generic_name'] ?? '') . ' ' .
-            ($product['brands'] ?? '') . ' ' .
-            ($product['categories'] ?? '') . ' ' .
-            ($product['ingredients_text'] ?? '')
-        );
+        if (!empty($product['categories'])) {
+            $texts[] = strtolower($product['categories']);
+        }
 
-        // normalisasi tags: buang "en:" dan jadikan lowercase
-        $tags = array_map(function ($tag) {
-            $tag = strtolower($tag);
-            $tag = str_replace(['en:', 'id:'], '', $tag);
-            $tag = str_replace('_', '-', $tag);
-            return $tag;
-        }, $rawTags);
+        if (!empty($product['product_name'])) $texts[] = strtolower($product['product_name']);
+        if (!empty($product['generic_name'])) $texts[] = strtolower($product['generic_name']);
 
-        $haystack = implode(' ', $tags) . ' ' . $textBlob;
+        // combine jadi 1 string besar
+        $haystack = implode(' | ', array_filter($texts));
 
         $rules = SwapRule::with('category')->get();
 
         $matchedCategory = null;
 
         foreach ($rules as $rule) {
-            if (!$rule->api_keyword) continue;
+            $needle = strtolower(trim($rule->api_keyword ?? ''));
+            if ($needle === '') continue;
 
-            $keyword = strtolower(trim($rule->api_keyword));
-            $keyword = str_replace('_', '-', $keyword);
+            $needle2 = str_replace(['-', '_'], ' ', $needle);
 
-            $keywordSpaced = str_replace('-', ' ', $keyword);
-
-            if (str_contains($haystack, $keyword) || str_contains($haystack, $keywordSpaced)) {
+            if (str_contains($haystack, $needle) || str_contains($haystack, $needle2)) {
                 $matchedCategory = $rule->category;
                 break;
             }
         }
 
-        // JIKA TIDAK ADA RULE MATCH
         if (!$matchedCategory) {
+            $healthySuggestions = Food::where('is_healthy', 1)->inRandomOrder()->take(12)->get();
+            $primarySwap = $healthySuggestions->first();
+
             return view('swap.result', [
-                'unhealthyFood' => array_merge($unhealthyFood, ['tags' => $tags]),
-                'matchedCategory' => null,
-                'primarySwap' => null,
-                'healthySuggestions' => [],
-                'comparison' => [],
-                'debug_haystack' => $haystack,
+                'unhealthyFood'      => $unhealthyFood,
+                'matchedCategory'    => null,
+                'primarySwap'        => $primarySwap,
+                'healthySuggestions' => $healthySuggestions,
+                'comparison'         => $this->makeComparison($unhealthyFood, $primarySwap),
             ]);
         }
 
@@ -85,25 +77,38 @@ class SwapController extends Controller
             ->where('is_healthy', 1)
             ->get();
 
-        $primarySwap = $healthySuggestions->first();
-
-        $comparison = [];
-        if ($primarySwap) {
-            $comparison = [
-                'calories_saved' => max(0, $unhealthyFood['calories'] - $primarySwap->calories),
-                'sugar_saved' => max(0, $unhealthyFood['sugar'] - $primarySwap->sugar),
-                'fat_saved' => max(0, $unhealthyFood['fat'] - $primarySwap->fat),
-                'score' => 85,
-            ];
+        if ($healthySuggestions->isEmpty()) {
+            $healthySuggestions = Food::where('is_healthy', 1)->inRandomOrder()->take(12)->get();
         }
 
+        $primarySwap = $healthySuggestions->first();
+
         return view('swap.result', [
-            'unhealthyFood' => array_merge($unhealthyFood, ['tags' => $tags]),
-            'matchedCategory' => $matchedCategory,
-            'primarySwap' => $primarySwap,
-            'comparison' => $comparison,
+            'unhealthyFood'      => $unhealthyFood,
+            'matchedCategory'    => $matchedCategory,
+            'primarySwap'        => $primarySwap,
             'healthySuggestions' => $healthySuggestions,
-            'debug_haystack' => $haystack,
+            'comparison'         => $this->makeComparison($unhealthyFood, $primarySwap),
         ]);
+    }
+
+    private function normTag(string $tag): string
+    {
+        $tag = strtolower($tag);
+        $tag = str_replace('en:', '', $tag);
+        $tag = str_replace(['-', '_'], ' ', $tag);
+        return trim($tag);
+    }
+
+    private function makeComparison(array $unhealthyFood, $primarySwap): array
+    {
+        if (!$primarySwap) return [];
+
+        return [
+            'calories_saved' => max(0, ($unhealthyFood['calories'] ?? 0) - ($primarySwap->calories ?? 0)),
+            'sugar_saved'    => max(0, ($unhealthyFood['sugar'] ?? 0) - ($primarySwap->sugar ?? 0)),
+            'fat_saved'      => max(0, ($unhealthyFood['fat'] ?? 0) - ($primarySwap->fat ?? 0)),
+            'score'          => 85,
+        ];
     }
 }
