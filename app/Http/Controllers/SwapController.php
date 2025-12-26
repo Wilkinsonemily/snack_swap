@@ -119,5 +119,5 @@ class SwapController extends Controller
             'comparison',
             'healthySuggestions'
         ));
-
+    }
 }
