@@ -35,3 +35,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
 });
 
+Route::view('/about', 'about')->name('about');
