@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Services\Providers\OpenFoodFactsProvider;
 use App\Services\Providers\LocalDatabaseProvider;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class FoodCatalogService
 {
