@@ -10,17 +10,13 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Super Admin',
-            'email' => 'admin@toko.com',
-            'password' => Hash::make('password123'),
-            'is_admin' => 1,
-        ]);
-
-        $this->call([
-            FoodSeeder::class,
-            SnackSeeder::class,
-            SwapSeeder::class,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@toko.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => Hash::make('password123'),
+                'is_admin' => 1,
+            ]
+        );
     }
 }
