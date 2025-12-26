@@ -179,8 +179,12 @@
           </li>
           @endif
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('about') }}">About</a>
+            <a class="nav-link d-flex align-items-center gap-1" href="{{ route('about') }}">
+                <i class="bi bi-info-circle"></i>
+                About Us
+            </a>
         </li>
+
 
         </ul>
       </div>
