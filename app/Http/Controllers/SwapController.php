@@ -25,32 +25,59 @@ class SwapController extends Controller
             'calories' => $product['nutriments']['energy-kcal_100g'] ?? 0,
             'sugar' => $product['nutriments']['sugars_100g'] ?? 0,
             'fat' => $product['nutriments']['fat_100g'] ?? 0,
-            'tags' => array_map(
-                fn($tag) => strtolower(str_replace('en:', '', $tag)),
-                $product['categories_tags'] ?? []
-            )
         ];
+
+        $rawTags = [];
+
+        $rawTags = array_merge($rawTags, $product['categories_tags'] ?? []);
+        $rawTags = array_merge($rawTags, $product['labels_tags'] ?? []);
+        $rawTags = array_merge($rawTags, $product['brands_tags'] ?? []);
+
+        $textBlob = strtolower(
+            ($product['product_name'] ?? '') . ' ' .
+            ($product['generic_name'] ?? '') . ' ' .
+            ($product['brands'] ?? '') . ' ' .
+            ($product['categories'] ?? '') . ' ' .
+            ($product['ingredients_text'] ?? '')
+        );
+
+        // normalisasi tags: buang "en:" dan jadikan lowercase
+        $tags = array_map(function ($tag) {
+            $tag = strtolower($tag);
+            $tag = str_replace(['en:', 'id:'], '', $tag);
+            $tag = str_replace('_', '-', $tag);
+            return $tag;
+        }, $rawTags);
+
+        $haystack = implode(' ', $tags) . ' ' . $textBlob;
 
         $rules = SwapRule::with('category')->get();
 
         $matchedCategory = null;
 
         foreach ($rules as $rule) {
-            foreach ($unhealthyFood['tags'] as $tag) {
-                if (str_contains($tag, strtolower($rule->api_keyword))) {
-                    $matchedCategory = $rule->category;
-                    break 2;
-                }
+            if (!$rule->api_keyword) continue;
+
+            $keyword = strtolower(trim($rule->api_keyword));
+            $keyword = str_replace('_', '-', $keyword);
+
+            $keywordSpaced = str_replace('-', ' ', $keyword);
+
+            if (str_contains($haystack, $keyword) || str_contains($haystack, $keywordSpaced)) {
+                $matchedCategory = $rule->category;
+                break;
             }
         }
 
+        // JIKA TIDAK ADA RULE MATCH
         if (!$matchedCategory) {
             return view('swap.result', [
-                'unhealthyFood' => $unhealthyFood,
+                'unhealthyFood' => array_merge($unhealthyFood, ['tags' => $tags]),
                 'matchedCategory' => null,
                 'primarySwap' => null,
                 'healthySuggestions' => [],
-                'comparison' => []
+                'comparison' => [],
+                'debug_haystack' => $haystack,
             ]);
         }
 
@@ -66,16 +93,17 @@ class SwapController extends Controller
                 'calories_saved' => max(0, $unhealthyFood['calories'] - $primarySwap->calories),
                 'sugar_saved' => max(0, $unhealthyFood['sugar'] - $primarySwap->sugar),
                 'fat_saved' => max(0, $unhealthyFood['fat'] - $primarySwap->fat),
-                'score' => 85
+                'score' => 85,
             ];
         }
 
-        return view('swap.result', compact(
-            'unhealthyFood',
-            'matchedCategory',
-            'primarySwap',
-            'comparison',
-            'healthySuggestions'
-        ));
+        return view('swap.result', [
+            'unhealthyFood' => array_merge($unhealthyFood, ['tags' => $tags]),
+            'matchedCategory' => $matchedCategory,
+            'primarySwap' => $primarySwap,
+            'comparison' => $comparison,
+            'healthySuggestions' => $healthySuggestions,
+            'debug_haystack' => $haystack,
+        ]);
     }
 }
