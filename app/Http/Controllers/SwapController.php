@@ -19,7 +19,6 @@ class SwapController extends Controller
 
         $product = $data['product'];
 
-        // 🔹 ORIGINAL PRODUCT
         $unhealthyFood = [
             'name' => $product['product_name'] ?? 'Unknown',
             'image' => $product['image_url'] ?? 'https://placehold.co/400',
@@ -32,7 +31,6 @@ class SwapController extends Controller
             )
         ];
 
-        // 🔹 AMBIL SEMUA RULE SEKALI (BIAR CEPAT & STABIL)
         $rules = SwapRule::with('category')->get();
 
         $matchedCategory = null;
@@ -46,7 +44,6 @@ class SwapController extends Controller
             }
         }
 
-        // 🔹 JIKA TIDAK ADA RULE MATCH
         if (!$matchedCategory) {
             return view('swap.result', [
                 'unhealthyFood' => $unhealthyFood,
@@ -57,7 +54,6 @@ class SwapController extends Controller
             ]);
         }
 
-        // 🔹 AMBIL MAKANAN SEHAT SESUAI CATEGORY
         $healthySuggestions = Food::where('category_id', $matchedCategory->id)
             ->where('is_healthy', 1)
             ->get();
