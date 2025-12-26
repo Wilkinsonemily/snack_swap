@@ -28,10 +28,10 @@
                 <div class="card-body">
                     <h5 class="fw-semibold mb-2">⚙️ How It Works</h5>
                     <ul class="mb-0">
-                        <li>🔍 Search or scan a food product</li>
+                        <li>🔍 Search a food product</li>
                         <li>📊 Fetch nutrition data from OpenFoodFacts API</li>
                         <li>🔄 Match with healthier alternatives from our database</li>
-                        <li>✅ Show nutrition comparison & health score</li>
+                        <li>✅ Show nutrition & health score</li>
                     </ul>
                 </div>
             </div>
