@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,13 +13,13 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Super Admin',
             'email' => 'admin@toko.com',
-            'password' => Hash::make($request->'password123'),
-            'is_admin' => 1, 
+            'password' => Hash::make('password123'),
+            'is_admin' => 1,
         ]);
 
         $this->call([
-            CategorySeeder::class,
             FoodSeeder::class,
+            SnackSeeder::class,
             SwapSeeder::class,
         ]);
     }
