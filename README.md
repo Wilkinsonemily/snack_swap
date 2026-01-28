@@ -1,60 +1,114 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🥗 SnackSwap
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**SnackSwap** is a web application designed to help users make **healthier food choices** by finding better alternatives to packaged snacks.  
+By searching or scanning products, users can view nutritional information and receive **healthier swap recommendations** based on calories, sugar, fat, and other key nutrients.
 
-## About Laravel
+This project supports **SDG 3 — Good Health and Well-Being** by encouraging informed and healthier eating habits.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🌐 Live Website
+👉 https://snackswap.up.railway.app/
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 📌 Application Overview
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Many people consume packaged foods without fully understanding their nutritional value.  
+SnackSwap simplifies nutrition data and helps users quickly compare products to make smarter consumption decisions.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🚩 Problems Addressed
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Nutritional labels are often confusing or ignored
+- Users want healthier food options but don’t know suitable alternatives
+- No simple tool to quickly compare nutrition values between snacks
+- Lack of awareness regarding sugar, fat, and calorie intake
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🎯 Project Objectives
 
-## Contributing
+- Present nutritional information in a **clear and easy-to-understand format**
+- Help users make **healthier food choices**
+- Increase awareness of nutrition content in packaged foods
+- Support healthier lifestyles through alternative food recommendations
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🌍 Sustainable Development Goal
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### **SDG 3 — Good Health and Well-Being**
+SnackSwap contributes by:
+- Helping users understand food nutrition
+- Encouraging healthier eating habits
+- Supporting prevention of diet-related health issues
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## ⭐ Main Features
 
-## License
+- **Food Search**
+  - Search food products by name or product code
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# snack_swap
+- **Nutrition Details**
+  - Display nutrition values such as calories, sugar, fat, protein, sodium, and more
+
+- **Healthy Categories**
+  - Low sugar
+  - High protein
+  - High fiber
+  - Other health-based categories
+
+- **Healthy Swap Recommendation**
+  - Suggests healthier alternatives with improved nutritional values
+
+- **Admin Dashboard**
+  - Manage food data and nutrition information
+
+---
+
+## 🛠 Technology Stack
+
+### Backend
+- **Laravel (PHP)**
+
+### Database
+- **MySQL** (Railway Database)
+
+### Deployment & Infrastructure
+- **Railway**
+- **Docker**
+- GitHub-integrated deployment
+- Environment variables managed via Railway Variables
+- Automatic redeploy on code updates
+
+---
+
+## 🚀 Deployment Overview
+
+- Platform: **Railway**
+- Build & run using **Docker**
+- Publicly accessible application URL
+- Continuous deployment connected to GitHub repository
+
+---
+
+## 📄 Documentation
+
+- **Project Documentation (Canva):**  
+  https://www.canva.com/design/DAG8mQ7ZtOk/5NHgmzs3WVp1k2RGe5c3Pg/view
+
+> *Note: Documentation is written in Indonesian.*
+
+---
+
+## 📝 Notes
+
+SnackSwap focuses on **usability**, **nutrition awareness**, and **simple decision-making**.  
+Future improvements may include barcode scanning, personalized recommendations, and expanded food databases.
+
+---
+
+🥑 *Making healthier food choices easier — one swap at a time.*
